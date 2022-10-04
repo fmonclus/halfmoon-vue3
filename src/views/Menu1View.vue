@@ -9,7 +9,7 @@ setTimeout(function () {
 </script>
 
 <template>
- 
+
   <div class="content-wrapper" id="content">
     <div v-if="loading" class="container-fluid">
       <div class="row">
@@ -18,13 +18,13 @@ setTimeout(function () {
         </div>
       </div>
     </div>
-     
+
     <div v-else class="container-fluid">
       <div class="row">
         <div class="col-12">
           <div class="w-full">
             <div class="card mw-full">
-              
+
               <h2 class="card-title">Card Example 1</h2>
               The weather forecast didn't say that, but the steel plate in his
               hip did. He had learned over the years to trust his hip over the

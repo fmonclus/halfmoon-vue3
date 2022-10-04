@@ -1,11 +1,11 @@
 <script setup>
 defineProps({
-    title: String,
-    msg: String,
-    close: String,
-    confirm: String,
-    confirmVisible: Boolean,
-    showModal: Boolean
+  title: String,
+  msg: String,
+  close: String,
+  confirm: String,
+  confirmVisible: Boolean,
+  showModal: Boolean
 });
 
 const emit = defineEmits(['closePopup', 'confirmPopup']);
