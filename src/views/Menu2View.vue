@@ -1,4 +1,54 @@
-<script default>
+<script setup>
+import { ref, onMounted } from "vue";
+
+
+const name = ref("");
+const gender = ref("");
+const areas = ref([]);
+const languages = ref([]);
+const description = ref("");
+const picture = ref("");
+const remember = ref(false);
+const agree = ref(false);
+const password = ref("");
+const finish = ref(false);
+
+
+function Enviar() {
+    name.value = this.full_name.value;
+    areas.value = this.areas_opt.value;
+    description.value = this.description_txt.value;    
+    remember.value = this.remember_chk.value === 'on' ? true : false;
+    agree.value = this.agree_chk.value === 'on' ? true : false;
+    password.value = this.password_txt.value;
+    finish.value = true;
+}
+
+function changeLanguages(e) {
+    languages.value = [...e.target.selectedOptions].map((o) => o.value)
+}
+
+function changeGender(e) {
+    gender.value = e.target.value;
+}
+
+function selectedFile(e) {
+    var file = e.target.files[0];
+    var tmpPath = URL.createObjectURL(file);
+
+    //let req = new XMLHttpRequest();
+    //let formData = new FormData();
+    //formData.append("photo", file);
+    //req.open("POST", '/upload/image');
+    //req.send(formData);
+
+    picture.value = file.name;
+}
+
+
+
+// onMounted(() => {    
+// });
 
 </script>
 
@@ -7,36 +57,38 @@
         <div class="container-fluid">
             <div class="w-full">
                 <div class="card mw-full">
-                    <form class="w-400 mw-full">
-                        <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% -->
+                    <div class="w-400 mw-full">
                         <!-- Input -->
                         <div class="form-group">
-                            <label for="full-name" class="required">Full name</label>
-                            <input type="text" class="form-control" id="full-name" placeholder="Full name"
-                                required="required">
+                            <label for="full_name" class="required">Full name</label>
+                            <input v-model="name" class="form-control" id="full_name" placeholder="Full name"
+                                required="required" autocomplete="off">
                         </div>
 
                         <!-- Radio -->
                         <div class="form-group">
-                            <label for="gender-male" class="required">Gender</label>
+                            <label for="gendermale" class="required">Gender</label>
                             <div class="custom-radio">
-                                <input type="radio" name="gender" id="gender-male" value="male" required="required">
-                                <label for="gender-male">Male</label>
+                                <input v-model="gender" type="radio" name="gender_opt" id="gendermale" value="male"
+                                    required="required" @change="changeGender">
+                                <label for="gendermale">Male</label>
                             </div>
                             <div class="custom-radio">
-                                <input type="radio" name="gender" id="gender-female" value="female" required="required">
-                                <label for="gender-female">Female</label>
+                                <input v-model="gender" type="radio" name="gender_opt" id="genderfemale" value="female"
+                                    required="required" @change="changeGender">
+                                <label for="genderfemale">Female</label>
                             </div>
                             <div class="custom-radio">
-                                <input type="radio" name="gender" id="gender-other" value="other" required="required">
-                                <label for="gender-other">Other</label>
+                                <input v-model="gender" type="radio" name="gender_opt" id="genderother" value="other"
+                                    required="required" @change="changeGender">
+                                <label for="genderother">Other</label>
                             </div>
                         </div>
 
                         <!-- Select -->
                         <div class="form-group">
-                            <label for="area-of-specialization" class="required">Area of specialization</label>
-                            <select class="form-control" id="area-of-specialization" required="required">
+                            <label for="areas_opt" class="required">Area of specialization</label>
+                            <select v-model="areas" class="form-control" id="areas_opt" required="required">
                                 <option value="" selected="selected" disabled="disabled">Select your area of
                                     specialization</option>
                                 <option value="front-end">Front-end</option>
@@ -47,9 +99,9 @@
 
                         <!-- Multi-select -->
                         <div class="form-group">
-                            <label for="languages" class="required">Languages</label>
-                            <select class="form-control" id="languages" multiple="multiple" required="required"
-                                size="5">
+                            <label for="languages_opt" class="required">Languages</label>
+                            <select @change="changeLanguages" v-model="languages" class="form-control"
+                                id="languages_opt" multiple="multiple" required="required" size="5">
                                 <option value="javascript">JavaScript</option>
                                 <option value="python">Python</option>
                                 <option value="php">PHP</option>
@@ -59,42 +111,63 @@
 
                         <!-- Textarea -->
                         <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea class="form-control" id="description"
+                            <label for="description_txt">Description</label>
+                            <textarea v-model="description" class="form-control" id="description_txt"
                                 placeholder="Write a short description about yourself."></textarea>
                         </div>
 
                         <!-- File input -->
                         <div class="form-group">
-                            <label for="picture" class="required">Display picture</label>
-                            <div class="custom-file">
-                                <input type="file" id="picture" required="required">
-                                <label for="picture">Choose picture</label>
+                            <label for="picture_txt" class="required">Display picture</label>
+                            <div class="custom-file">                                
+                                <input @change="selectedFile" type="file" id="picture_txt" accept="image/*" required="required">
+                                <label for="picture_txt">Choose picture</label>                                
+                                &nbsp;
+                                <small>{{ picture }}</small>
                             </div>
                         </div>
 
                         <!-- Switch -->
                         <div class="form-group">
                             <div class="custom-switch">
-                                <input type="checkbox" id="remember-my-information">
-                                <label for="remember-my-information">Remember my information</label>
+                                <input v-model="remember" type="checkbox" id="remember_chk">
+                                <label for="remember_chk">Remember my information</label>
                             </div>
                         </div>
 
                         <!-- Checkbox -->
                         <div class="form-group">
                             <div class="custom-checkbox">
-                                <input type="checkbox" id="agree-to-terms">
-                                <label for="agree-to-terms">I agree to all the <a href="#" class="hyperlink">terms and
+                                <input v-model="agree" type="checkbox" id="agree_chk">
+                                <label for="agree_chk">I agree to all the <a href="#" class="hyperlink">terms and
                                         conditions</a></label>
                             </div>
                         </div>
 
+                        <!-- Input -->
+                        <div class="form-group">
+                            <label for="password_txt" class="required">Password</label>
+                            <input v-model.trim="password" type="password" class="form-control" id="password_txt"
+                                required="required" autocomplete="off">
+                        </div>
+
                         <!-- Submit button -->
-                        <input class="btn btn-primary" type="submit" value="Submit">
-                    </form>
+                        <input class="btn btn-primary" type="submit" @click="Enviar" value="Send">
 
 
+
+                        <p><strong>Name: </strong>{{ name }}</p>
+                        <p><strong>Gender: </strong>{{ gender }}</p>
+                        <p><strong>Areas: </strong>{{ areas }}</p>
+                        <p><strong>Languages: </strong>{{ languages }}</p>
+                        <p><strong>Description: </strong>{{ description }}</p>
+                        <p><strong>Picture: </strong>{{ picture }}</p>
+                        <p><strong>Remember: </strong>{{ remember }}</p>
+                        <p><strong>Agree: </strong>{{ agree }}</p>
+                        <p><strong>Password: </strong>{{ password}}</p>
+
+
+                    </div>
                 </div>
             </div>
         </div>

@@ -3,6 +3,7 @@ import { ref } from "vue";
 import LoadingSpinner from "../components/LoadingSpinner.vue";
 
 const loading = ref(true);
+
 setTimeout(function () {
   loading.value = false;
 }, 1500);
