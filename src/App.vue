@@ -45,8 +45,8 @@ function validMode() {
                 </button>
             </div>
             <a href="#" class="navbar-brand ml-10 ml-sm-15">
-                <img src="@/assets/images/fake-logo.svg" class="hidden-dm mr-5 mr-sm-10" alt="halfmoon-logo">
-                <img src="@/assets/images/fake-logo.svg" class="hidden-lm mr-5 mr-sm-10" alt="halfmoon-logo-white">
+                <img src="./assets/images/fake-logo.svg" class="hidden-dm mr-5 mr-sm-10" alt="halfmoon-logo">
+                <img src="./assets/images/fake-logo.svg" class="hidden-lm mr-5 mr-sm-10" alt="halfmoon-logo-white">
                 Brand
             </a>
             <span>&nbsp;&nbsp;</span>

@@ -1,11 +1,12 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUpdated, watch } from "vue";
 
 
 const name = ref("");
 const gender = ref("");
 const areas = ref([]);
 const languages = ref([]);
+const interest = ref([]);
 const description = ref("");
 const picture = ref("");
 const pictureBlob = ref("");
@@ -25,13 +26,9 @@ function Enviar() {
     finish.value = true;
 }
 
-function changeLanguages(e) {
-    languages.value = [...e.target.selectedOptions].map((o) => o.value)
-}
-
-function changeGender(e) {
-    gender.value = e.target.value;
-}
+// function changeLanguages(e) {
+//     languages.value = [...e.target.selectedOptions].map((o) => o.value)
+// }
 
 function selectedFile(e) {
     var file = e.target.files[0];
@@ -47,11 +44,44 @@ function selectedFile(e) {
     pictureBlob.value = tmpPath;
 }
 
+function emitUncheck(event, id, text) {
+    const interestArray = interest.value;
+    if (event) {
+        interestArray.push(text);
+    } else {
+        for (var i = interestArray.length - 1; i >= 0; i--) {
+            if (interestArray[i] == text) {
+                interestArray.splice(i, 1);
+            }
+        }
+    }
+    interest.value = interestArray;
+}
+
 function Back() {
     finish.value = false;
 }
 
+onUpdated(() => {    // text content should be the same as current `count.value`
+    const interestChk = document.getElementsByName("interestChk");
+    const interestArray = interest.value;
+    if (interestChk.length != 0 && interestArray.length != 0) {
+        interestChk.forEach((item, index) => {
+            const position = interestArray.indexOf(item.value);
+            if (position != -1) {
+                item.checked = true;
+            }
+        })
+    }
+})
 
+watch(gender, (newValue, old) => {
+    gender.value = newValue;
+});
+
+watch(languages, (newValue, old) => {
+    languages.value = newValue;
+});
 // onMounted(() => {
 // });
 
@@ -78,17 +108,17 @@ function Back() {
                             <label for="gendermale" class="required">Gender</label>
                             <div class="custom-radio">
                                 <input v-model="gender" type="radio" name="gender_opt" id="gendermale" value="male"
-                                    required="required" @change="changeGender">
+                                    required="required">
                                 <label for="gendermale">Male</label>
                             </div>
                             <div class="custom-radio">
                                 <input v-model="gender" type="radio" name="gender_opt" id="genderfemale" value="female"
-                                    required="required" @change="changeGender">
+                                    required="required">
                                 <label for="genderfemale">Female</label>
                             </div>
                             <div class="custom-radio">
                                 <input v-model="gender" type="radio" name="gender_opt" id="genderother" value="other"
-                                    required="required" @change="changeGender">
+                                    required="required">
                                 <label for="genderother">Other</label>
                             </div>
                         </div>
@@ -108,13 +138,65 @@ function Back() {
                         <!-- Multi-select -->
                         <div class="form-group">
                             <label for="languages_opt" class="required">Languages</label>
-                            <select @change="changeLanguages" v-model="languages" class="form-control"
-                                id="languages_opt" multiple="multiple" required="required" size="5">
+                            <!-- <select @change="changeLanguages" v-model="languages" class="form-control" -->
+                            <select v-model="languages" class="form-control" id="languages_opt" multiple="multiple"
+                                required="required" size="5">
                                 <option value="javascript">JavaScript</option>
                                 <option value="python">Python</option>
+                                <option value="c#">C#</option>
                                 <option value="php">PHP</option>
+                                <option value="java">Java</option>
                                 ...
                             </select>
+                        </div>
+
+                        <div class="form-group">
+                            <fieldset>
+                                <legend id="lblAreaInteresse">Area of interest</legend>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <div class="custom-checkbox">
+                                                <input type="checkbox" id="option1_chk" value="Human Sciences"
+                                                    name="interestChk"
+                                                    @change="emitUncheck($event.target.checked, $event.target.id, $event.target.value)">
+                                                <label for="option1_chk" class="blank"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control" :tabindex="-1" value="Human Sciences"
+                                        style="cursor: pointer;" :disabled="true">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <div class="custom-checkbox">
+                                                <input type="checkbox" id="option2_chk" value="Technology"
+                                                    name="interestChk"
+                                                    @change="emitUncheck($event.target.checked, $event.target.id, $event.target.value)">
+                                                <label for="option2_chk" class="blank"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control" :tabindex="-1" value="Technology"
+                                        style="cursor: pointer;" :disabled="true">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <div class="custom-checkbox">
+                                                <input type="checkbox" id="option3_chk" value="Marketing"
+                                                    name="interestChk"
+                                                    @change="emitUncheck($event.target.checked, $event.target.id, $event.target.value)">
+                                                <label for="option3_chk" class="blank"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control" :tabindex="-1" value="Marketing"
+                                        style="cursor: pointer;" :disabled="true">
+                                </div>
+
+                            </fieldset>
                         </div>
 
                         <!-- Textarea -->
@@ -170,6 +252,7 @@ function Back() {
                         <p><strong>Gender: </strong>{{ gender }}</p>
                         <p><strong>Areas: </strong>{{ areas }}</p>
                         <p><strong>Languages: </strong>{{ languages }}</p>
+                        <p><strong>Interest: </strong>{{ interest }}</p>
                         <p><strong>Description: </strong>{{ description }}</p>
                         <p><strong>Picture: </strong>{{ picture }}</p>
                         <p v-show="pictureBlob!=''"><img class="thumb img" :src="pictureBlob" alt="" /></p>
