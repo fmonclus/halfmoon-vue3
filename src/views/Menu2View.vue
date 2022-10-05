@@ -8,6 +8,7 @@ const areas = ref([]);
 const languages = ref([]);
 const description = ref("");
 const picture = ref("");
+const pictureBlob = ref("");
 const remember = ref(false);
 const agree = ref(false);
 const password = ref("");
@@ -15,12 +16,12 @@ const finish = ref(false);
 
 
 function Enviar() {
-    name.value = this.full_name.value;
-    areas.value = this.areas_opt.value;
-    description.value = this.description_txt.value;    
-    remember.value = this.remember_chk.value === 'on' ? true : false;
-    agree.value = this.agree_chk.value === 'on' ? true : false;
-    password.value = this.password_txt.value;
+    name.value = full_name.value;
+    areas.value = areas_opt.value;
+    description.value = description_txt.value;
+    remember.value = remember_chk.value === 'on' ? true : false;
+    agree.value = agree_chk.value === 'on' ? true : false;
+    password.value = password_txt.value;
     finish.value = true;
 }
 
@@ -43,11 +44,15 @@ function selectedFile(e) {
     //req.send(formData);
 
     picture.value = file.name;
+    pictureBlob.value = tmpPath;
+}
+
+function Back() {
+    finish.value = false;
 }
 
 
-
-// onMounted(() => {    
+// onMounted(() => {
 // });
 
 </script>
@@ -57,7 +62,10 @@ function selectedFile(e) {
         <div class="container-fluid">
             <div class="w-full">
                 <div class="card mw-full">
-                    <div class="w-400 mw-full">
+                    <div v-if="!finish" class="w-400 mw-full">
+
+                        <h3>Form controls</h3>
+
                         <!-- Input -->
                         <div class="form-group">
                             <label for="full_name" class="required">Full name</label>
@@ -119,9 +127,10 @@ function selectedFile(e) {
                         <!-- File input -->
                         <div class="form-group">
                             <label for="picture_txt" class="required">Display picture</label>
-                            <div class="custom-file">                                
-                                <input @change="selectedFile" type="file" id="picture_txt" accept="image/*" required="required">
-                                <label for="picture_txt">Choose picture</label>                                
+                            <div class="custom-file">
+                                <input @change="selectedFile" type="file" id="picture_txt" accept="image/*"
+                                    required="required">
+                                <label for="picture_txt">Choose picture</label>
                                 &nbsp;
                                 <small>{{ picture }}</small>
                             </div>
@@ -153,23 +162,43 @@ function selectedFile(e) {
 
                         <!-- Submit button -->
                         <input class="btn btn-primary" type="submit" @click="Enviar" value="Send">
+                    </div>
 
-
-
+                    <div v-else class="w-400 mw-full">
+                        <h3>Your answers</h3>
                         <p><strong>Name: </strong>{{ name }}</p>
                         <p><strong>Gender: </strong>{{ gender }}</p>
                         <p><strong>Areas: </strong>{{ areas }}</p>
                         <p><strong>Languages: </strong>{{ languages }}</p>
                         <p><strong>Description: </strong>{{ description }}</p>
                         <p><strong>Picture: </strong>{{ picture }}</p>
+                        <p v-show="pictureBlob!=''"><img class="thumb img" :src="pictureBlob" alt="" /></p>
                         <p><strong>Remember: </strong>{{ remember }}</p>
                         <p><strong>Agree: </strong>{{ agree }}</p>
-                        <p><strong>Password: </strong>{{ password}}</p>
+                        <p><strong>Password: </strong>{{ password }}</p>
 
-
+                        <input class="btn btn-primary" type="submit" @click="Back" value="Back">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+.thumb {
+    width: 200px;
+    height: 150px;
+    overflow: hidden;
+}
+
+.thumb img {
+    min-width: 200px;
+    min-height: 150px;
+    width: 200px;
+}
+
+strong {
+    color: #1890FF;
+}
+</style>
