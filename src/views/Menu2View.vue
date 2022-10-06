@@ -15,6 +15,31 @@ const agree = ref(false);
 const password = ref("");
 const finish = ref(false);
 
+const genderItems = [
+    { name: "Male", id: 1 },
+    { name: "Female", id: 2 },
+    { name: "Other", id: 3 },
+];
+
+const areasItems = [
+    { name: "Front-end", id: 1 },
+    { name: "Back-end", id: 2 },
+    { name: "Full-stack", id: 3 },
+];
+
+const languagesItems = [
+    { name: "JavaScript", id: 1 },
+    { name: "Python", id: 2 },
+    { name: "C#", id: 3 },
+    { name: "PHP", id: 4 },
+    { name: "Java", id: 5 },
+];
+
+const interestItems = [
+    { name: "Human Sciences", id: 1 },
+    { name: "Technology", id: 2 },
+    { name: "Marketing", id: 3 },
+];
 
 function onSubmit(e) {
     name.value = full_name.value;
@@ -62,6 +87,18 @@ function Back() {
     finish.value = false;
 }
 
+watch(gender, (newValue, old) => {
+    gender.value = newValue;
+});
+
+watch(languages, (newValue, old) => {
+    languages.value = newValue;
+});
+
+onMounted(() => {
+});
+
+
 onUpdated(() => {    // text content should be the same as current `count.value`
     const interestChk = document.getElementsByName("interestChk");
     const interestArray = interest.value;
@@ -75,15 +112,6 @@ onUpdated(() => {    // text content should be the same as current `count.value`
     }
 })
 
-watch(gender, (newValue, old) => {
-    gender.value = newValue;
-});
-
-watch(languages, (newValue, old) => {
-    languages.value = newValue;
-});
-// onMounted(() => {
-// });
 
 </script>
 
@@ -106,96 +134,51 @@ watch(languages, (newValue, old) => {
                             <!-- Radio -->
                             <div class="form-group">
                                 <label for="gendermale" class="required">Gender</label>
-                                <div class="custom-radio">
-                                    <input v-model="gender" type="radio" name="gender_opt" id="gendermale" value="male"
-                                        required="required">
-                                    <label for="gendermale">Male</label>
-                                </div>
-                                <div class="custom-radio">
-                                    <input v-model="gender" type="radio" name="gender_opt" id="genderfemale"
-                                        value="female" required="required">
-                                    <label for="genderfemale">Female</label>
-                                </div>
-                                <div class="custom-radio">
-                                    <input v-model="gender" type="radio" name="gender_opt" id="genderother"
-                                        value="other" required="required">
-                                    <label for="genderother">Other</label>
+                                <div v-for="item in genderItems" :key="item" class="custom-radio">
+                                    <input v-model="gender" type="radio" name="gender_opt" :id="`gender_${item.id}`" :value="item.name" required="required">
+                                    <label :for="`gender_${item.id}`">{{ item.name }}</label>                                    
                                 </div>
                             </div>
 
                             <!-- Select -->
                             <div class="form-group">
-                                <label for="areas_opt" class="required">Area of specialization</label>
+                                <label for="area_specialization_lbl" class="required">Area of specialization</label>
                                 <select v-model="areas" class="form-control" id="areas_opt" required="required">
                                     <option value="" selected="selected" disabled="disabled">Select your area of
                                         specialization</option>
-                                    <option value="front-end">Front-end</option>
-                                    <option value="back-end">Back-end</option>
-                                    <option value="full-stack">Full-stack</option>
+                                    <option v-for="item in areasItems" :value="item.name" :id="item.id" :key="item">
+                                        {{ item.name }}
+                                    </option>
                                 </select>
                             </div>
 
                             <!-- Multi-select -->
                             <div class="form-group">
-                                <label for="languages_opt" class="required">Languages</label>
-                                <!-- <select @change="changeLanguages" v-model="languages" class="form-control" -->
+                                <label for="languages_lbl" class="required">Languages</label>
                                 <select v-model="languages" class="form-control" id="languages_opt" multiple="multiple"
                                     required="required" size="5">
-                                    <option value="javascript">JavaScript</option>
-                                    <option value="python">Python</option>
-                                    <option value="c#">C#</option>
-                                    <option value="php">PHP</option>
-                                    <option value="java">Java</option>
-                                    ...
+                                    <option v-for="item in languagesItems" :value="item.name" :id="item.id" :key="item">
+                                        {{ item.name }}</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <fieldset>
-                                    <legend id="lblAreaInteresse">Area of interest</legend>
-                                    <div class="input-group">
+                                    <legend id="area_interest_lbl">Area of interest</legend>
+                                    <div v-for="item in interestItems" :key="item" class="input-group">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
                                                 <div class="custom-checkbox">
-                                                    <input type="checkbox" id="option1_chk" value="Human Sciences"
-                                                        name="interestChk"
+                                                    <input type="checkbox" :id="`chk_interest_${item.id}`"
+                                                        :value="item.name" name="interestChk"
                                                         @change="emitUncheck($event.target.checked, $event.target.id, $event.target.value)">
-                                                    <label for="option1_chk" class="blank"></label>
+                                                    <label :for="`chk_interest_${item.id}`" class="blank"></label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="text" class="form-control" :tabindex="-1" value="Human Sciences"
-                                            style="cursor: pointer;" :disabled="true">
+                                        <input type="text" class="form-control" :tabindex="-1" :value="item.name"
+                                            :disabled="true">
                                     </div>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <div class="custom-checkbox">
-                                                    <input type="checkbox" id="option2_chk" value="Technology"
-                                                        name="interestChk"
-                                                        @change="emitUncheck($event.target.checked, $event.target.id, $event.target.value)">
-                                                    <label for="option2_chk" class="blank"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <input type="text" class="form-control" :tabindex="-1" value="Technology"
-                                            style="cursor: pointer;" :disabled="true">
-                                    </div>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <div class="custom-checkbox">
-                                                    <input type="checkbox" id="option3_chk" value="Marketing"
-                                                        name="interestChk"
-                                                        @change="emitUncheck($event.target.checked, $event.target.id, $event.target.value)">
-                                                    <label for="option3_chk" class="blank"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <input type="text" class="form-control" :tabindex="-1" value="Marketing"
-                                            style="cursor: pointer;" :disabled="true">
-                                    </div>
-
                                 </fieldset>
                             </div>
 
@@ -208,10 +191,9 @@ watch(languages, (newValue, old) => {
 
                             <!-- File input -->
                             <div class="form-group">
-                                <label for="picture_txt" class="required">Display picture</label>
+                                <label for="picture_txt">Display picture</label>
                                 <div class="custom-file">
-                                    <input @change="selectedFile" type="file" id="picture_txt" accept="image/*"
-                                        required="required">
+                                    <input @change="selectedFile" type="file" id="picture_txt" accept="image/*">
                                     <label for="picture_txt">Choose picture</label>
                                     &nbsp;
                                     <small>{{ picture }}</small>
@@ -243,7 +225,7 @@ watch(languages, (newValue, old) => {
                             </div>
 
                             <!-- Submit button -->
-                            <input class="btn btn-primary" type="submit"  value="Send">
+                            <input class="btn btn-primary" type="submit" value="Send">
                         </form>
                     </div>
 
