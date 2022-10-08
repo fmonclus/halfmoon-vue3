@@ -1,10 +1,16 @@
 <script setup>
 import { ref, onMounted, onUpdated, watch } from "vue";
 
+import treeviewcontrol from '../components/treeviewcomponent.vue'
+import multiplecontrol from '../components/multiplecomponent.vue'
+import selectcontrol from '../components/selectcomponent.vue'
+import { getTreeviewItems } from "../composables/getTreeviewItems";
+
+
 
 const name = ref("");
 const gender = ref("");
-const areas = ref([]);
+const areas = ref("");
 const languages = ref([]);
 const interest = ref([]);
 const description = ref("");
@@ -41,13 +47,7 @@ const interestItems = [
     { name: "Marketing", id: 3 },
 ];
 
-function onSubmit(e) {
-    name.value = full_name.value;
-    areas.value = areas_opt.value;
-    description.value = description_txt.value;
-    remember.value = remember_chk.value === 'on' ? true : false;
-    agree.value = agree_chk.value === 'on' ? true : false;
-    password.value = password_txt.value;
+function onSubmit(e) { 
     finish.value = true;
 }
 
@@ -69,18 +69,35 @@ function selectedFile(e) {
     pictureBlob.value = tmpPath;
 }
 
-function emitUncheck(event, id, text) {
+function unCheck(event, id, text) {
+    // const interestArray = interest.value        
+    // if (event) {
+    //     interestArray.push(text);
+    // } else {
+    //     for (var i = interestArray.length - 1; i >= 0; i--) {
+    //         if (interestArray[i] == text) {
+    //             interestArray.splice(i, 1);
+    //         } 
+    //     }
+    // }    
+    // interest.value = interestArray;
+
+    const { getItems, data, error } = getTreeviewItems();
+    getItems(interest.value, event, text);
+    interest.value = (error != false) ? data.value : [];
+}
+
+function itemChecked() {
+    const interestChk = document.getElementsByName("interestChk");
     const interestArray = interest.value;
-    if (event) {
-        interestArray.push(text);
-    } else {
-        for (var i = interestArray.length - 1; i >= 0; i--) {
-            if (interestArray[i] == text) {
-                interestArray.splice(i, 1);
+    if (interestChk.length != 0 && interestArray.length != 0) {
+        interestChk.forEach((item, index) => {
+            const position = interestArray.indexOf(item.value);
+            if (position != -1) {
+                item.checked = true;
             }
-        }
+        })
     }
-    interest.value = interestArray;
 }
 
 function Back() {
@@ -96,23 +113,14 @@ watch(languages, (newValue, old) => {
 });
 
 onMounted(() => {
+    // interest.value = ['Technology'];
+    // itemChecked();
 });
 
 
 onUpdated(() => {    // text content should be the same as current `count.value`
-    const interestChk = document.getElementsByName("interestChk");
-    const interestArray = interest.value;
-    if (interestChk.length != 0 && interestArray.length != 0) {
-        interestChk.forEach((item, index) => {
-            const position = interestArray.indexOf(item.value);
-            if (position != -1) {
-                item.checked = true;
-            }
-        })
-    }
+    itemChecked();
 })
-
-
 </script>
 
 <template>
@@ -135,43 +143,47 @@ onUpdated(() => {    // text content should be the same as current `count.value`
                             <div class="form-group">
                                 <label for="gendermale" class="required">Gender</label>
                                 <div v-for="item in genderItems" :key="item" class="custom-radio">
-                                    <input v-model="gender" type="radio" name="gender_opt" :id="`gender_${item.id}`" :value="item.name" required="required">
-                                    <label :for="`gender_${item.id}`">{{ item.name }}</label>                                    
+                                    <input v-model="gender" type="radio" name="gender_opt" :id="`gender_${item.id}`"
+                                        :value="item.name" required="required">
+                                    <label :for="`gender_${item.id}`">{{ item.name }}</label>
                                 </div>
                             </div>
 
                             <!-- Select -->
                             <div class="form-group">
-                                <label for="area_specialization_lbl" class="required">Area of specialization</label>
+                                <!-- <label for="area_specialization_lbl" class="required">Area of specialization</label>
                                 <select v-model="areas" class="form-control" id="areas_opt" required="required">
-                                    <option value="" selected="selected" disabled="disabled">Select your area of
-                                        specialization</option>
-                                    <option v-for="item in areasItems" :value="item.name" :id="item.id" :key="item">
-                                        {{ item.name }}
-                                    </option>
-                                </select>
+                                    <option value="" selected="selected" disabled="disabled">Select your area of specialization</option>
+                                    <option v-for="item in areasItems" :value="item.name" :id="item.id" :key="item">{{ item.name }}</option>
+                                </select>                                -->
+
+                                <selectcontrol v-model="areas" :label="'Area of specialization'" :id="`areas_opt`"
+                                    :placeholder="`Select your area of specialization`" :items="areasItems">
+                                </selectcontrol>
                             </div>
 
                             <!-- Multi-select -->
                             <div class="form-group">
-                                <label for="languages_lbl" class="required">Languages</label>
-                                <select v-model="languages" class="form-control" id="languages_opt" multiple="multiple"
-                                    required="required" size="5">
+                                <!-- <label for="languages_lbl" class="required">Languages</label>
+                                <select v-model="languages" class="form-control" id="languages_opt" multiple="multiple" required="required" size="5">
                                     <option v-for="item in languagesItems" :value="item.name" :id="item.id" :key="item">
                                         {{ item.name }}</option>
-                                </select>
+                                </select> -->
+
+                                <multiplecontrol v-model="languages" :label="'Languages'" :items="languagesItems"
+                                    :size="`5`" :multiple="`multiple`"></multiplecontrol>
                             </div>
 
                             <div class="form-group">
-                                <fieldset>
-                                    <legend id="area_interest_lbl">Area of interest</legend>
+                                <!-- <fieldset>
+                                    <legend id="area_interest_lbl">Area of interest</legend>s
                                     <div v-for="item in interestItems" :key="item" class="input-group">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
                                                 <div class="custom-checkbox">
                                                     <input type="checkbox" :id="`chk_interest_${item.id}`"
                                                         :value="item.name" name="interestChk"
-                                                        @change="emitUncheck($event.target.checked, $event.target.id, $event.target.value)">
+                                                        @change="emitUncheck($evwent.target.checked, $event.target.id, $event.target.value)">
                                                     <label :for="`chk_interest_${item.id}`" class="blank"></label>
                                                 </div>
                                             </div>
@@ -179,7 +191,10 @@ onUpdated(() => {    // text content should be the same as current `count.value`
                                         <input type="text" class="form-control" :tabindex="-1" :value="item.name"
                                             :disabled="true">
                                     </div>
-                                </fieldset>
+                                </fieldset> -->
+
+                                <treeviewcontrol :label="'Area of interest'" :items="interestItems" @unCheck="unCheck">
+                                </treeviewcontrol>
                             </div>
 
                             <!-- Textarea -->
