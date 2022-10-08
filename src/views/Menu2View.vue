@@ -47,7 +47,7 @@ const interestItems = [
     { name: "Marketing", id: 3 },
 ];
 
-function onSubmit(e) { 
+function onSubmit(e) {
     finish.value = true;
 }
 
@@ -253,7 +253,12 @@ onUpdated(() => {    // text content should be the same as current `count.value`
                         <p><strong>Interest: </strong>{{ interest }}</p>
                         <p><strong>Description: </strong>{{ description }}</p>
                         <p><strong>Picture: </strong>{{ picture }}</p>
-                        <p v-show="pictureBlob!=''"><img class="thumb img" :src="pictureBlob" alt="" /></p>
+                        <p v-show="pictureBlob!=''">
+                            <a target="_blank" :href="`${pictureBlob}`">
+                                <img class="thumb img" :src="pictureBlob" alt="" />                                                                
+                            </a>
+                            <span class="break"><small>click over image to open</small></span>
+                        </p>
                         <p><strong>Remember: </strong>{{ remember }}</p>
                         <p><strong>Agree: </strong>{{ agree }}</p>
                         <p><strong>Password: </strong>{{ password }}</p>
@@ -268,15 +273,21 @@ onUpdated(() => {    // text content should be the same as current `count.value`
 
 <style scoped>
 .thumb {
-    width: 200px;
-    height: 150px;
-    overflow: hidden;
+    width: 150px;
 }
 
 .thumb img {
-    min-width: 200px;
-    min-height: 150px;
-    width: 200px;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.break{
+    display: block;
+}
+
+a {
+    color:darkgrey;
+
 }
 
 strong {

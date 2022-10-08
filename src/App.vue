@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { RouterLink, RouterView } from "vue-router";
+import navbarcontrol from '../src/components/navbarcomponent.vue'
 
 
 const home = ref('Home');
@@ -10,15 +11,16 @@ const sibebarMenu1 = ref('Menu 1');
 const sibebarMenu2 = ref('Menu 2');
 const sibebarMenu3 = ref('Menu 3');
 
+const navbaritems = [
+    { path: '/', text: 'Home' },
+    { path: '/Privacy', text: 'Privacy' },
+];
+
+const leftButtons = [
+    { path: '/Login', text: 'Login' },
+];
+
 const iconMode = ref('');
-
-validMode();
-
-function toggleMode() {
-    halfmoon.toggleDarkMode()
-    validMode();
-}
-
 function validMode() {
     if (halfmoon.getPreferredMode() == "light-mode") {
         iconMode.value = 'fa fa-moon';
@@ -31,6 +33,12 @@ function validMode() {
     }
 }
 
+function toggleMode() {
+    halfmoon.toggleDarkMode()
+    validMode();
+}
+
+validMode();
 </script>
 
 <template>
@@ -38,7 +46,7 @@ function validMode() {
         data-sidebar-type="overlayed-sm-and-down">
 
         <!-- Navbar start -->
-        <nav class="navbar">
+        <!-- <nav class="navbar">
             <div class="navbar-content">
                 <button id="toggle-sidebar-btn" class="btn btn-action" type="button" onclick="halfmoon.toggleSidebar()">
                     <i class="fa fa-bars" aria-hidden="true"></i>
@@ -82,11 +90,15 @@ function validMode() {
                     </div>
                 </div>
             </div>
-        </nav>
+        </nav> -->
         <!-- Navbar end -->
 
+        <navbarcontrol :navbarItems="navbaritems" :leftButtons="leftButtons" :iconMode="iconMode" :badge="'vue.js'"
+            :brand="'Demo'" :logo="'/src/assets/images/fake-logo.svg'" :logoWhite="'/src/assets/images/fake-logo.svg'"
+            @toggleMode="toggleMode"></navbarcontrol>
+
         <!-- Sidebar overlay -->
-        <div class="sidebar-overlay" onclick="halfmoon.toggleSidebar()"></div>
+        <div class="sidebar-overlay" onclick="halfmoon.toggleSidebar()"></div>s
         <!-- Sidebar start -->
 
         <div class="sidebar" id="sidebar">
@@ -109,7 +121,7 @@ function validMode() {
                     data-active-scroll-disabled="disabled">
                     <span class="name">{{ sibebarMenu3 }}</span>
                 </router-link>
-                
+
                 <br />
             </div>
         </div>
